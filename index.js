@@ -15,6 +15,7 @@ const crypto = require("crypto");
 const User = require('./model/User');
 const Coaches = require('./model/Coaches');
 const Club = require('./model/Club');
+const Player = require('./model/Player');
 
 dotenv.config();
 const mongo_uri = process.env.MONGO_URI;
@@ -341,6 +342,30 @@ app.post("/create-club", authenticateJWT, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+  // Add new Player
+app.post('/add-player', async (req, res) => {
+  try {
+    // const { name, postHeld, image, whatsappLink, phoneNumber, xLink } = req.body.payLoad;
+
+    const player = new Player(req.body); // accepts all fields, extra ones too due to strict: false
+    player.goalsScored = 0;
+    player.goalsAssisted = 0;
+    await player.save();
+
+  
+
+  
+
+    res.status(201).json({
+      message: 'Player added successfully',
+      player: player
+    });
+  } catch (error) {
+    console.error('Error adding Exco:', error);
+    res.status(500).json({ message: 'Failed to add Player' });
   }
 });
 
