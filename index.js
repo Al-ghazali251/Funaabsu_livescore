@@ -319,8 +319,11 @@ app.post('/update-profile', authenticateJWT, async (req, res) => {
 // POST /coach-access
 app.post("/create-club", authenticateJWT, async (req, res) => {
   try {
-    const userId = req.user.id; // from middleware
-    const user = await User.findById(userId);
+     const userId = req.user.userId; // from middleware
+       if (!userId) {
+          return res.status(400).json({ message: "Missing userId in request" });
+      }
+     const user = await User.findOne({ googleId: userId });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
