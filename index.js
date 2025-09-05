@@ -381,6 +381,17 @@ app.get('/clubs', async (req, res) => {
     }
   });
 
+// Get all player
+app.get('/players', async (req, res) => {
+    try {
+      const players = await Player.find(); // most recent first
+      res.json({ players });
+    } catch (error) {
+      console.error('Fetch error:', error);
+      res.status(500).json({ error: 'Failed to fetch players' });
+    }
+  });
+
   app.listen(3000, '0.0.0.0', () => {
     console.log("Server is running on port 3000");
   });
