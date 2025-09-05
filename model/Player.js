@@ -16,6 +16,13 @@ playerName: {
   playerClub: {
     type: String,
   },
+    medicalCondition: {
+    type: String,
+  },
+    phoneNumber: {
+    type: Number,
+  },
+  
   
 }, { strict: false }); // allows saving unspecified fields
 
