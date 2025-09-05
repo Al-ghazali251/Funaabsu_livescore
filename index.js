@@ -337,7 +337,7 @@ app.post("/create-club", authenticateJWT, async (req, res) => {
       await club.save();
   
 
-    res.status(201).json({ message: "Club access granted", email });
+    res.status(201).json({ message: "Club access granted", club });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
