@@ -316,7 +316,7 @@ app.post('/update-profile', authenticateJWT, async (req, res) => {
 });
 
 
-// POST /coach-access
+// POST /create-club
 app.post("/create-club", authenticateJWT, async (req, res) => {
   try {
      const userId = req.user.userId; // from middleware
@@ -343,6 +343,18 @@ app.post("/create-club", authenticateJWT, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+
+// Get all clubs
+app.get('/clubs', async (req, res) => {
+    try {
+      const clubs = await Club.find(); // most recent first
+      res.json({ clubs });
+    } catch (error) {
+      console.error('Fetch error:', error);
+      res.status(500).json({ error: 'Failed to fetch clubs' });
+    }
+  });
 
   app.listen(3000, '0.0.0.0', () => {
     console.log("Server is running on port 3000");
