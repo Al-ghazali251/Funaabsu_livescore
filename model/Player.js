@@ -19,6 +19,6 @@ playerName: {
   
 }, { strict: false }); // allows saving unspecified fields
 
-const Coach = mongoose.model('Coach', coachSchema);
+const Player = mongoose.model('Player', playerSchema);
 
-module.exports = Coach;
+module.exports = Player;
