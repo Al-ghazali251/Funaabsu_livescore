@@ -392,6 +392,27 @@ app.get('/players', async (req, res) => {
     }
   });
 
+
+
+  // POST multiple players at once
+app.post("/players/bulk", async (req, res) => {
+  try {
+    const players = req.body; // expecting an array of player objects
+    if (!Array.isArray(players)) {
+      return res.status(400).json({ message: "Request body must be an array" });
+    }
+
+    const savedPlayers = await Player.insertMany(players);
+    res.status(201).json({
+      message: "Players saved successfully",
+      count: savedPlayers.length,
+      data: savedPlayers,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error saving players", error });
+  }
+});
+
   app.listen(3000, '0.0.0.0', () => {
     console.log("Server is running on port 3000");
   });
