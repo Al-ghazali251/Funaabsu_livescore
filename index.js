@@ -318,21 +318,21 @@ app.post('/update-profile', authenticateJWT, async (req, res) => {
 
 
 // POST /create-club
-app.post("/create-club", authenticateJWT, async (req, res) => {
+app.post("/create-club", async (req, res) => {
   try {
-     const userId = req.user.userId; // from middleware
-       if (!userId) {
-          return res.status(400).json({ message: "Missing userId in request" });
-      }
-     const user = await User.findOne({ googleId: userId });
+    //  const userId = req.user.userId; // from middleware
+    //    if (!userId) {
+    //       return res.status(400).json({ message: "Missing userId in request" });
+    //   }
+    //  const user = await User.findOne({ googleId: userId });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    // if (!user) {
+    //   return res.status(404).json({ message: "User not found" });
+    // }
 
-    if (!user.isAdmin) {
-      return res.status(403).json({ message: "Access denied. Admins only." });
-    }
+    // if (!user.isAdmin) {
+    //   return res.status(403).json({ message: "Access denied. Admins only." });
+    // }
 
       const club = new Club(req.body); // accepts all fields, extra ones too due to strict: false
       await club.save();
