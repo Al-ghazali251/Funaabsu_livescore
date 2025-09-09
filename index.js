@@ -334,6 +334,7 @@ app.post("/create-club", async (req, res) => {
     //   return res.status(403).json({ message: "Access denied. Admins only." });
     // }
 
+    console.log(req.body);
       const club = new Club(req.body); // accepts all fields, extra ones too due to strict: false
       await club.save();
   
