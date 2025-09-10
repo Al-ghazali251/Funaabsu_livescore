@@ -434,6 +434,58 @@ app.get('/players', async (req, res) => {
   });
 
 
+  // POST: Add group
+app.post("/add-group", authenticateJWT, async (req, res) => {
+  try {
+
+
+      const userId = req.user.userId; // from middleware
+       if (!userId) {
+          return res.status(400).json({ message: "Missing userId in request" });
+      }
+     const user = await User.findOne({ googleId: userId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.isAdmin) {
+      return res.status(403).json({ message: "Access denied. Admins only." });
+    }
+
+    const {
+      groupName,
+      club1,
+      club2,
+      club3,
+      club4,
+      tournamentName,
+      date,
+    } = req.body;
+
+    if (!groupName) {
+      return res.status(400).json({ message: "groupName is required" });
+    }
+
+    const newGroup = new Group({
+      groupName,
+      club1,
+      club2,
+      club3,
+      club4,
+      tournamentName,
+      date,
+    });
+
+    const savedGroup = await newGroup.save();
+    res.status(201).json(savedGroup);
+  } catch (error) {
+    console.error("Error adding group:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
 
   // POST multiple players at once
 app.post("/players/bulk", async (req, res) => {

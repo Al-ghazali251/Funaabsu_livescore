@@ -9,10 +9,10 @@ const TournamentSchema = new mongoose.Schema(
     },
     tournamentLogo: {
       type: String, // URL or path to image
-      required: true,
+      // required: true,
     },
   },
-  { timestamps: true }
+  { strict: false }
 );
 
 module.exports = mongoose.model("Tournament", TournamentSchema);
