@@ -345,7 +345,7 @@ app.post("/create-tournament", authenticateJWT, async (req, res) => {
 
     const newTournament = new Tournament({
       tournamentName,
-      tournamentLogo,
+
     });
 
     const savedTournament = await newTournament.save();
