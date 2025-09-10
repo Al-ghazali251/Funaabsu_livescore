@@ -486,6 +486,45 @@ app.post("/add-group", authenticateJWT, async (req, res) => {
 });
 
 
+app.post("/add-fixture", async (req, res) => {
+  try {
+
+      const userId = req.user.userId; // from middleware
+       if (!userId) {
+          return res.status(400).json({ message: "Missing userId in request" });
+      }
+     const user = await User.findOne({ googleId: userId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.isAdmin) {
+      return res.status(403).json({ message: "Access denied. Admins only." });
+    }
+    const { homeTeam, awayTeam, date, tournamentName, groupName } = req.body;
+
+    if (!homeTeam || !awayTeam || !date || !tournamentName || !groupName) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const newFixture = new Fixture({
+      homeTeam,
+      awayTeam,
+      date,
+      tournamentName,
+      groupName,
+    });
+
+    const savedFixture = await newFixture.save();
+    res.status(201).json(savedFixture);
+  } catch (error) {
+    console.error("Error adding fixture:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
 
   // POST multiple players at once
 app.post("/players/bulk", async (req, res) => {
