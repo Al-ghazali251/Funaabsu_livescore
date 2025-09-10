@@ -530,9 +530,9 @@ app.post("/add-fixture", authenticateJWT,async (req, res) => {
     }
     const { homeTeam, awayTeam, date, tournamentName, groupName } = req.body;
 
-    if (!homeTeam || !awayTeam || !date || !tournamentName || !groupName) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
+    // if (!homeTeam || !awayTeam || !date || !tournamentName || !groupName) {
+    //   return res.status(400).json({ message: "All fields are required" });
+    // }
 
     const newFixture = new Fixture({
       homeTeam,
