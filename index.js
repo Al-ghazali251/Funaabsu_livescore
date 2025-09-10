@@ -16,6 +16,7 @@ const User = require('./model/User');
 const Coaches = require('./model/Coaches');
 const Club = require('./model/Club');
 const Player = require('./model/Player');
+const Tournament = require('./model/Tournament');
 
 dotenv.config();
 const mongo_uri = process.env.MONGO_URI;
@@ -313,6 +314,45 @@ app.post('/update-profile', authenticateJWT, async (req, res) => {
   } catch (err) {
       console.error("Error updating user:", err);
       res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
+// POST: create tournament
+app.post("/create-tournament", authenticateJWT, async (req, res) => {
+  try {
+
+       const userId = req.user.userId; // from middleware
+       if (!userId) {
+          return res.status(400).json({ message: "Missing userId in request" });
+      }
+     const user = await User.findOne({ googleId: userId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.isAdmin) {
+      return res.status(403).json({ message: "Access denied. Admins only." });
+    }
+
+    const tournamentName = req.body.tournamentName;
+    // const tournamentLogo = req.body.tournamentLogo;
+
+    // if (!tournamentName || !tournamentLogo) {
+    //   return res.status(400).json({ message: "tournamentName and tournamentLogo are required" });
+    // }
+
+    const newTournament = new Tournament({
+      tournamentName,
+      tournamentLogo,
+    });
+
+    const savedTournament = await newTournament.save();
+    res.status(201).json(savedTournament);
+  } catch (error) {
+    console.error("Error creating tournament:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
