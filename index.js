@@ -486,7 +486,7 @@ app.post("/add-group", authenticateJWT, async (req, res) => {
 });
 
 
-app.post("/add-fixture", async (req, res) => {
+app.post("/add-fixture", authenticateJWT,async (req, res) => {
   try {
 
       const userId = req.user.userId; // from middleware
