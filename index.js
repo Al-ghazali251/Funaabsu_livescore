@@ -572,10 +572,6 @@ app.post("/players/bulk", async (req, res) => {
   }
 });
 
-const express = require("express");
-const router = express.Router();
-const Fixture = require("../model/Fixture");
-
 // GET: Get all fixtures
 app.get("/fetch-fixtures", async (req, res) => {
   try {
