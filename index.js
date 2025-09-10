@@ -18,6 +18,7 @@ const Club = require('./model/Club');
 const Player = require('./model/Player');
 const Tournament = require('./model/Tournament');
 const Group = require('./model/Group');
+const Fixture = require('./model/Fixture');
 
 dotenv.config();
 const mongo_uri = process.env.MONGO_URI;
