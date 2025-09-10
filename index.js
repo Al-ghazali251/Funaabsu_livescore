@@ -17,6 +17,7 @@ const Coaches = require('./model/Coaches');
 const Club = require('./model/Club');
 const Player = require('./model/Player');
 const Tournament = require('./model/Tournament');
+const Group = require('./model/Group');
 
 dotenv.config();
 const mongo_uri = process.env.MONGO_URI;
@@ -481,6 +482,31 @@ app.post("/add-group", authenticateJWT, async (req, res) => {
     res.status(201).json(savedGroup);
   } catch (error) {
     console.error("Error adding group:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
+
+// GET: Get all groups for a given tournamentName
+app.get("/tournament/:tournamentName", async (req, res) => {
+  try {
+    const tournamentName = req.params.tournamentName;
+
+    if (!tournamentName) {
+      return res.status(400).json({ message: "tournamentName param is required" });
+    }
+
+    // Match groups where tournamentName field = tournamentName from param
+    const groups = await Group.find({ tournamentName: tournamentName });
+
+    if (!groups || groups.length === 0) {
+      return res.status(404).json({ message: "No groups found for this tournament" });
+    }
+
+    res.status(200).json(groups);
+  } catch (error) {
+    console.error("Error fetching groups:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
