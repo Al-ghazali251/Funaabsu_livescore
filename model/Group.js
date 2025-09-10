@@ -35,4 +35,4 @@ const groupSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Tournament", TournamentSchema);
+module.exports = mongoose.model("Group", groupSchema);
