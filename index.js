@@ -591,8 +591,6 @@ app.get("/fixture-details/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
-
 
 // GET: Get all fixtures
 app.get("/fetch-fixtures", async (req, res) => {
