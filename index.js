@@ -573,10 +573,6 @@ app.post("/players/bulk", async (req, res) => {
 });
 
 
-const express = require("express");
-const router = express.Router();
-const Fixture = require("../model/Fixture");
-
 // GET: Get fixture details by ID
 app.get("/fixture-details/:id", async (req, res) => {
   try {
