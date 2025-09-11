@@ -572,6 +572,32 @@ app.post("/players/bulk", async (req, res) => {
   }
 });
 
+
+const express = require("express");
+const router = express.Router();
+const Fixture = require("../model/Fixture");
+
+// GET: Get fixture details by ID
+app.get("/fixture-details/:id", async (req, res) => {
+  try {
+    const fixtureId = req.params.id;
+
+    const fixture = await Fixture.findById(fixtureId);
+
+    if (!fixture) {
+      return res.status(404).json({ message: "Fixture not found" });
+    }
+
+    res.status(200).json(fixture);
+  } catch (error) {
+    console.error("Error fetching fixture details:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+module.exports = router;
+
+
 // GET: Get all fixtures
 app.get("/fetch-fixtures", async (req, res) => {
   try {
