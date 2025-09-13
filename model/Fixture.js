@@ -13,13 +13,42 @@ leagueName: {
   type: String
   },
 
-  homeStats: {
+  homeComments: {
   type: [String]
   },
 
-  awayStats: {
+  awayComments: {
   type: [String]
   },
+
+ // explicit structured stats for each side
+  homeStats: {
+    bigChance: { type: Number, default: 0 },
+    gkSaves: { type: Number, default: 0 },
+    fouls: { type: Number, default: 0 },
+    freeKicks: { type: Number, default: 0 },
+    yellowCard: { type: Number, default: 0 },
+    redCard: { type: Number, default: 0 },
+    penalty: { type: Number, default: 0 },
+    offside: { type: Number, default: 0 },
+    goalscorer: { type: [String], default: [] },
+    assists: { type: [String], default: [] }
+  },
+
+  awayStats: {
+    bigChance: { type: Number, default: 0 },
+    gkSaves: { type: Number, default: 0 },
+    fouls: { type: Number, default: 0 },
+    freeKicks: { type: Number, default: 0 },
+    yellowCard: { type: Number, default: 0 },
+    redCard: { type: Number, default: 0 },
+    penalty: { type: Number, default: 0 },
+    offside: { type: Number, default: 0 },
+    goalscorer: { type: [String], default: [] },
+    assists: { type: [String], default: [] }
+  }
+});
+
 
   tournamentName: {
     type: String
