@@ -11,7 +11,6 @@ const cron = require('node-cron');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const rateLimit = require("express-rate-limit");
-const crypto = require("crypto"); 
 const User = require('./model/User');
 const Coaches = require('./model/Coaches');
 const Club = require('./model/Club');
@@ -222,27 +221,28 @@ catch (error) {
 });
 
 app.get('/user-details', authenticateJWT, async (req, res) => {
-  try {
+    try {
 
-    const userId = req.user.userId;
+        const userId = req.user.userId;
 
 
-    if (!userId) {
-      return res.status(400).json({ message: "Missing googleId in session" });
-    }
+            if (!userId) {
+                  return res.status(400).json({ message: "Missing googleId in session" });
+                      }
 
-    const user = await User.findOne({ googleId: userId });
+                          const user = await User.findOne({ googleId: userId });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+                              if (!user) {
+                                    return res.status(404).json({ message: "User not found" });
+                                        }
 
-    return res.status(200).json({ user });
-  } catch (error) {
-    console.error("Error in /user-detail:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
+                                            return res.status(200).json({ user });
+                                              } catch (error) {
+                                                  console.error("Error in /user-detail:", error);
+                                                      res.status(500).json({ message: "Internal server error" });
+                                                        }
+                                                        });
+})
 
 
 // POST /coach-access
@@ -571,6 +571,48 @@ app.post("/players/bulk", async (req, res) => {
     res.status(500).json({ message: "Error saving players", error });
   }
 });
+
+
+
+// POST endpoint to update match status
+app.post("/update-stats/:fixtureId", authenticateJWT, async (req, res) => {
+  try {
+    const { fixtureId } = req.params;
+    const { side, comment } = req.body;
+
+    if (!side || !comment) {
+      return res.status(400).json({ message: "side and comment are required" });
+    }
+
+    // Ensure side is valid
+    if (side !== "home" && side !== "away") {
+      return res.status(400).json({ message: "side must be either 'home' or 'away'" });
+    }
+
+    // Build dynamic field to push comment
+    const updateField = side === "home" ? "homeStats" : "awayStats";
+
+    // Update fixture by pushing the comment
+    const updatedFixture = await Fixture.findByIdAndUpdate(
+      fixtureId,
+      { $push: { [updateField]: comment } },
+      { new: true }
+    );
+
+    if (!updatedFixture) {
+      return res.status(404).json({ message: "Fixture not found" });
+    }
+
+    res.status(200).json({
+      message: "Status updated successfully",
+      fixture: updatedFixture
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 
 
 // GET: Get fixture details by ID

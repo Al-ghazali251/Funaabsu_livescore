@@ -13,6 +13,14 @@ leagueName: {
   type: String
   },
 
+  homeStats: {
+  type: [String]
+  },
+
+  awayStats: {
+  type: [String]
+  },
+
   tournamentName: {
     type: String
     },
