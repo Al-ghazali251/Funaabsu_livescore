@@ -46,8 +46,8 @@ leagueName: {
     offside: { type: Number, default: 0 },
     goalscorer: { type: [String], default: [] },
     assists: { type: [String], default: [] }
-  }
-});
+  },
+
 
 
   tournamentName: {
