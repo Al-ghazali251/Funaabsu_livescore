@@ -573,50 +573,42 @@ app.post("/players/bulk", async (req, res) => {
 });
 
 
-// POST endpoint to update stats
-app.post("/update-stats/:fixtureId", async (req, res) => {
+// PATCH /update-stats/:fixtureId
+app.patch("/update-stats/:fixtureId", async (req, res) => {
   try {
-    const { fixtureId } = req.params;
-    const { side, bigChance, gkSaves, fouls, freeKicks,
-            yellowCard, redCard, penalty, offside,
-            goalscorer, assists } = req.body;
+    const fixtureId = req.params.fixtureId;
+    const { homeStats, awayStats } = req.body;
 
-    if (!side || (side !== "home" && side !== "away")) {
-      return res.status(400).json({ message: "side must be 'home' or 'away'" });
+    const updateData = {};
+
+    // If homeStats is present, prepare field-by-field updates
+    if (homeStats) {
+      for (const [key, value] of Object.entries(homeStats)) {
+        updateData[`homeStats.${key}`] = value;
+      }
     }
 
-    const fixture = await Fixture.findById(fixtureId);
+    // If awayStats is present, prepare field-by-field updates
+    if (awayStats) {
+      for (const [key, value] of Object.entries(awayStats)) {
+        updateData[`awayStats.${key}`] = value;
+      }
+    }
+
+    const fixture = await Fixture.findByIdAndUpdate(
+      fixtureId,
+      { $set: updateData },
+      { new: true }
+    );
+
     if (!fixture) {
       return res.status(404).json({ message: "Fixture not found" });
     }
 
-    // Pick which stats to update
-    let stats = side === "home" ? fixture.homeStats : fixture.awayStats;
-
-    // Increment numbers if provided
-    if (bigChance) stats.bigChance += bigChance;
-    if (gkSaves) stats.gkSaves += gkSaves;
-    if (fouls) stats.fouls += fouls;
-    if (freeKicks) stats.freeKicks += freeKicks;
-    if (yellowCard) stats.yellowCard += yellowCard;
-    if (redCard) stats.redCard += redCard;
-    if (penalty) stats.penalty += penalty;
-    if (offside) stats.offside += offside;
-
-    // Push to arrays if provided
-    if (goalscorer) stats.goalscorer.push(goalscorer);
-    if (assists) stats.assists.push(assists);
-
-    // Save fixture
-    await fixture.save();
-
-    res.status(200).json({
-      message: "Stats updated successfully",
-      fixture
-    });
+    res.json({ message: "Stats updated successfully", fixture });
   } catch (error) {
-    console.error("Error updating stats:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
