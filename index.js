@@ -242,7 +242,7 @@ app.get('/user-details', authenticateJWT, async (req, res) => {
                                                       res.status(500).json({ message: "Internal server error" });
                                                         }
                                                         });
-})
+
 
 
 // POST /coach-access
