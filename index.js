@@ -574,7 +574,7 @@ app.post("/players/bulk", async (req, res) => {
 
 
 // PATCH /update-stats/:fixtureId
-app.patch("/update-stats/:fixtureId", async (req, res) => {
+app.post("/update-stats/:fixtureId", async (req, res) => {
   try {
     const fixtureId = req.params.fixtureId;
     const { homeStats, awayStats } = req.body;
