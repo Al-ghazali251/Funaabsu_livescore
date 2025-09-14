@@ -574,8 +574,20 @@ app.post("/players/bulk", async (req, res) => {
 
 
 // PATCH /update-stats/:fixtureId
-app.post("/update-stats/:fixtureId", async (req, res) => {
+app.post("/update-stats/:fixtureId", authenticateJWT, async (req, res) => {
   try {
+
+    const userId = req.user.id; // from middleware
+    const user = await User.findOne({ googleId: userId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.isAdmin) {
+      return res.status(403).json({ message: "Access denied. Admins only." });
+    }
+
     const fixtureId = req.params.fixtureId;
     const { homeStats, awayStats } = req.body;
 
