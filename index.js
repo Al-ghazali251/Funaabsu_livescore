@@ -577,7 +577,7 @@ app.post("/players/bulk", async (req, res) => {
 app.post("/update-stats/:fixtureId", authenticateJWT, async (req, res) => {
   try {
 
-    const userId = req.user.id; // from middleware
+    const userId = req.user.userId; // from middleware
     const user = await User.findOne({ googleId: userId });
 
     if (!user) {
