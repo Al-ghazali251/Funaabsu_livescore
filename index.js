@@ -424,18 +424,17 @@ app.get('/clubs', async (req, res) => {
     }
   });
 
-// GET /players/:playerName?
-app.get('/players/:playerName?', async (req, res) => {
+// GET /players?name=john
+app.get('/players', async (req, res) => {
   try {
-    const playerName = req.params.playerName;
-
+    const playerName = req.query.name;
     let query = {};
+
     if (playerName) {
-      query = { name: { $regex: playerName, $options: "i" } }; // contains + case-insensitive
+      query = { name: { $regex: playerName, $options: "i" } };
     }
 
     const players = await Player.find(query);
-
     res.json({ players });
   } catch (error) {
     console.error('Fetch error:', error);
