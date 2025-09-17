@@ -456,7 +456,7 @@ app.post("/players-record/:playerId", authenticateJWT, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (!user.isAdmin) {
+    if (!user.isCoach) {
       return res.status(403).json({ message: "Access denied. Admins only." });
     }
 
