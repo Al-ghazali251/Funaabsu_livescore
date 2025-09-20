@@ -489,6 +489,58 @@ app.post("/players-record/:playerId", authenticateJWT, async (req, res) => {
 
 
 
+// POST: Create a fixture
+app.post("/create-fixture", authenticateJWT, async (req, res) => {
+  try {
+  
+     const userId = req.user.userId; // from middleware
+       if (!userId) {
+          return res.status(400).json({ message: "Missing userId in request" });
+      }
+     const user = await User.findOne({ googleId: userId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.isCoach) {
+      return res.status(403).json({ message: "Access denied. Admins only." });
+    }
+
+    const homeTeam = req.body.homeTeam;
+    const awayTeam = req.body.awayTeam;
+    const time = req.body.time;
+    const date = req.body.date;
+
+
+    // Validate required fields
+    if (!homeTeam || !awayTeam || !time || !date) {
+      return res.status(400).json({ message: "homeTeam, awayTeam, time, and date are required" });
+    }
+
+    // Create new fixture
+    const newFixture = new Fixture({
+      homeTeam,
+      awayTeam,
+      time
+    });
+
+    // Save to DB
+    await newFixture.save();
+
+    res.status(201).json({
+      message: "Fixture created successfully",
+      fixture: newFixture
+    });
+  } catch (error) {
+    console.error("Error creating fixture:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
+
+
   // POST: Add group
 app.post("/add-group", authenticateJWT, async (req, res) => {
   try {
