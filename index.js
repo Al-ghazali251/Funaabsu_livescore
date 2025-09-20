@@ -679,19 +679,18 @@ app.post("/players/bulk", async (req, res) => {
 
 
 // PATCH /update-stats/:fixtureId
-app.post("/update-stats/:fixtureId", async (req, res) => {
- try {
+app.post("/update-stats/:fixtureId", authenticateJWT, async (req, res) => {
+  try {
+    const userId = req.user.userId; // from middleware
+    const user = await User.findOne({ googleId: userId });
 
-//     const userId = req.user.userId; // from middleware
-//     const user = await User.findOne({ googleId: userId });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     if (!user.isCoach) {
-//       return res.status(403).json({ message: "Access denied. Coaches only." });
-//     }
+    if (!user.isCoach) {
+      return res.status(403).json({ message: "Access denied. Coaches only." });
+    }
 
     const fixtureId = req.params.fixtureId;
     const { homeStats, awayStats } = req.body;
@@ -712,6 +711,9 @@ app.post("/update-stats/:fixtureId", async (req, res) => {
       }
     }
 
+    // Always mark fixture as played
+    updateData.isPlayed = true;
+
     const fixture = await Fixture.findByIdAndUpdate(
       fixtureId,
       { $set: updateData },
@@ -724,10 +726,11 @@ app.post("/update-stats/:fixtureId", async (req, res) => {
 
     res.json({ message: "Stats updated successfully", fixture });
   } catch (error) {
-    console.error(error);
+    console.error("Error updating stats:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
 
 
 
