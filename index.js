@@ -18,6 +18,7 @@ const Player = require('./model/Player');
 const Tournament = require('./model/Tournament');
 const Group = require('./model/Group');
 const Fixture = require('./model/Fixture');
+const Team = require('./model/Team');
 
 dotenv.config();
 const mongo_uri = process.env.MONGO_URI;
@@ -25,6 +26,7 @@ mongoose.connect(mongo_uri);
 
 
 const cors = require("cors");
+const League = require('./model/League');
 
 
 const db = mongoose.connection;
@@ -271,6 +273,94 @@ app.post("/coach-access", authenticateJWT, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+// POST: Create a new league
+app.post("/create-league", authenticateJWT, async (req, res) => {
+  try {
+
+         const userId = req.user.userId; // from middleware
+       if (!userId) {
+          return res.status(400).json({ message: "Missing userId in request" });
+      }
+     const user = await User.findOne({ googleId: userId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.isAdmin) {
+      return res.status(403).json({ message: "Access denied. Admins only." });
+    }
+
+
+
+    const { leagueName, leagueLogo, public_id } = req.body;
+
+    // Validate required field
+    if (!leagueName) {
+      return res.status(400).json({ message: "leagueName is required" });
+    }
+
+    const newLeague = new League({
+      leagueName,
+      leagueLogo,
+      public_id,
+    });
+
+    await newLeague.save();
+
+    res.status(201).json({
+      message: "League created successfully",
+      league: newLeague,
+    });
+  } catch (error) {
+    console.error("Error creating league:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// POST: Add a team to a league
+app.post("/add-team/:leagueId", async (req, res) => {
+  try {
+    const leagueId = req.params.leagueId;
+    const { teamName, teamLogo, public_id } = req.body;
+
+    if (!teamName) {
+      return res.status(400).json({ message: "teamName is required" });
+    }
+
+    const updatedLeague = await League.findByIdAndUpdate(
+      leagueId,
+      {
+        $push: {
+          teamStats: {
+            teamName,
+            teamLogo,
+            public_id,
+            wins: 0,
+            loss: 0,
+            goalsScored: 0,
+            goalsAgainst: 0,
+          },
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedLeague) {
+      return res.status(404).json({ message: "League not found" });
+    }
+
+    res.status(200).json({
+      message: "Team added successfully",
+      league: updatedLeague,
+    });
+  } catch (error) {
+    console.error("Error adding team:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 

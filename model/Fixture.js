@@ -48,7 +48,9 @@ leagueName: {
     assists: { type: [String], default: [] }
   },
 
-
+  isLeague: {
+    type: Boolean
+    },
 
   tournamentName: {
     type: String
